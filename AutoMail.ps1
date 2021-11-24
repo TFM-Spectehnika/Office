@@ -1,9 +1,9 @@
 #Clear-Host
 
-#Задаем переменные
+#Set variables
 $OfficeRegPath = "HKCU:\Software\Microsoft\Office\16.0\Outlook\Profiles"
 
-#Подключаемся к AD
+#Get data forom AD
 $UserName = $env:username
 $Filter = "(&(objectCategory=User)(samAccountName=$UserName))"
 $Searcher = New-Object System.DirectoryServices.DirectorySearcher
@@ -11,11 +11,11 @@ $Searcher.Filter = $Filter
 $ADUserPath = $Searcher.FindOne()
 $ADUser = $ADUserPath.GetDirectoryEntry()
 
-#Задаем системные значения
+#Set system enviroment
 [Environment]::SetEnvironmentVariable("mail", $ADUser.mail , "User")
 [Environment]::SetEnvironmentVariable("cname", $ADUser.DisplayName , "User")
 
-#Проверка ветки реестра
+#Check gegistry for value, if not set PRF
 if (Test-Path $OfficeRegPath) {
 Exit}
 Else {
