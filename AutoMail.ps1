@@ -1,21 +1,35 @@
 #Clear-Host
 
-#Set variables
+#Create Variables
 $OfficeRegPath = "HKCU:\Software\Microsoft\Office\16.0\Outlook\Profiles"
 
-#Get data forom AD
+#Connect to AD, get information
 $UserName = $env:username
 $Filter = "(&(objectCategory=User)(samAccountName=$UserName))"
 $Searcher = New-Object System.DirectoryServices.DirectorySearcher
 $Searcher.Filter = $Filter
 $ADUserPath = $Searcher.FindOne()
 $ADUser = $ADUserPath.GetDirectoryEntry()
+$Cname = $ADUser.DisplayName
+$Mail = $ADUser.mail
 
-#Set system enviroment
-[Environment]::SetEnvironmentVariable("mail", $ADUser.mail , "User")
-[Environment]::SetEnvironmentVariable("cname", $ADUser.DisplayName , "User")
+#Set folder for pfr
+$AppData=(Get-Item env:appdata).value
+$PRFPath = "\Microsoft\"
+$LocalPRFPath = $AppData+$PRFPath
 
-#Check gegistry for value, if not set PRF
+#Set share path for PRF
+$NetPRFFile = "\\net_share\outlook.prf"
+
+#Copy from net_share to local path
+Copy-Item -Path $NetPRFFile $LocalPRFPath -Force
+#Change data
+((Get-Content -path $LocalPRFPath"outlook.prf" -Raw) -replace '%cname%',$Cname) | Set-Content -Path $LocalPRFPath"outlook.prf"
+((Get-Content -path $LocalPRFPath"outlook.prf" -Raw) -replace '%mail%',$Mail) | Set-Content -Path $LocalPRFPath"outlook.prf"
+
+
+
+#Check reg path
 if (Test-Path $OfficeRegPath) {
 Exit}
 Else {
@@ -23,5 +37,5 @@ New-Item -path "HKCU:\Software\Microsoft" -name "Office"
 New-Item -path "HKCU:\Software\Microsoft\Office" -name "16.0"
 New-Item -path "HKCU:\Software\Microsoft\Office\16.0" -name "Outlook"
 New-Item -path "HKCU:\Software\Microsoft\Office\16.0\Outlook" -name "Setup"
-Set-ItemProperty "HKCU:\Software\Microsoft\Office\16.0\Outlook\Setup" -name ImportPRF -Value "\\srv-db1\Config.1C$\Outlook\outlook.prf"
+Set-ItemProperty "HKCU:\Software\Microsoft\Office\16.0\Outlook\Setup" -name ImportPRF -Value $LocalPRFPath"outlook.prf"
 }
