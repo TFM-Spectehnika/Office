@@ -1,6 +1,6 @@
 <Configuration ID="25282e9b-0140-4def-a0f0-cf344674bc08">
   <Info Description="" />
-  <Add OfficeClientEdition="64" Channel="PerpetualVL2021" SourcePath="\\srv-db1\Config.1C$\Office2019" Version="16.0.14332.20176" AllowCdnFallback="TRUE">
+  <Add OfficeClientEdition="64" Channel="PerpetualVL2021" SourcePath="\\net_path\Office" Version="16.0.14332.20176" AllowCdnFallback="TRUE">
     <Product ID="ProPlus2021Volume" PIDKEY="FXYTK-NJJ8C-GB6DW-3DYQT-6F7TH">
       <Language ID="ru-ru" />
       <Language ID="MatchPreviousMSI" />
@@ -37,6 +37,6 @@
   <Property Name="AUTOACTIVATE" Value="0" />
   <Property Name="FORCEAPPSHUTDOWN" Value="FALSE" />
   <Property Name="DeviceBasedLicensing" Value="0" />
-  <Updates Enabled="TRUE" UpdatePath="\\srv-db1\Config.1C$\Office2019" />
+  <Updates Enabled="TRUE" UpdatePath="\\net_path\Office" />
   <Display Level="Full" AcceptEULA="TRUE" />
 </Configuration>
